@@ -1,0 +1,38 @@
+env/
+venv/
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Virtual Environments
+.env
+venv/
+.venv/
+
+# Models
+models/
+*.pth
+*.pt
+
+# Raw Dataset
+data/raw/
+
+# Processed Images
+data/processed/images/
+
+# Colab
+/content/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Training artifacts
+*.ckpt
