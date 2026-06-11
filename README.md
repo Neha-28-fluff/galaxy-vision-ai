@@ -1,6 +1,6 @@
-# GalaxyVision AI
-
 <div align="center">
+
+# GalaxyVision AI
 
 **End-to-end Deep Learning project for Galaxy Morphology Classification using the Galaxy Zoo dataset**
 
