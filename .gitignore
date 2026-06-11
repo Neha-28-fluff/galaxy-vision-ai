@@ -1,8 +1,4 @@
 env/
-venv/
-__pycache__/
-.ipynb_checkpoints/
-*.pyc
 
 # Python
 __pycache__/
