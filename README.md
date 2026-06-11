@@ -1,14 +1,36 @@
-# 🌌 GalaxyVision AI
+# GalaxyVision AI
 
-An end-to-end Deep Learning project for **Galaxy Morphology Classification** using the Galaxy Zoo dataset.
+<div align="center">
 
-The model classifies galaxies into scientifically meaningful morphology categories and provides explainable predictions using Grad-CAM.
+**End-to-end Deep Learning project for Galaxy Morphology Classification using the Galaxy Zoo dataset**
+
+![Galaxy Vision AI](demo.gif)
+
+[Live Demo](https://galaxy-vision-ai.streamlit.app/)
+
+</div>
 
 ---
 
-## 🎯 Project Goal
+## Overview
 
-Build a computer vision system that can classify galaxy images into morphology classes such as:
+GalaxyVision AI is a computer vision project that classifies galaxy images into scientifically meaningful morphology categories using deep learning and transfer learning.
+
+The project includes:
+- dataset understanding and cleaning
+- Galaxy Zoo label engineering
+- baseline CNN training
+- transfer learning with ResNet50
+- Grad-CAM explainability
+- Streamlit deployment
+
+The goal is not only to predict galaxy morphology, but also to make the model interpretable and demo-friendly.
+
+---
+
+## Project Goal
+
+Build a galaxy image classification system that can identify morphology classes such as:
 
 - Round Elliptical
 - Intermediate Elliptical
@@ -17,95 +39,91 @@ Build a computer vision system that can classify galaxy images into morphology c
 - Unbarred Spiral
 - Irregular / Merger
 
-The project follows a real-world ML workflow:
+This project follows a complete ML workflow:
 
-1. Dataset Understanding
-2. Label Engineering
-3. Data Cleaning
-4. Model Training
-5. Explainability (Grad-CAM)
-6. Web Deployment (Streamlit)
-
----
-
-## 📂 Dataset
-
-Dataset: Galaxy Zoo
-
-The original dataset contains galaxy images along with volunteer vote distributions for multiple morphology-related questions.
-
-Instead of using predefined labels, morphology labels were engineered from Galaxy Zoo's hierarchical decision tree.
+1. Dataset understanding  
+2. Label engineering  
+3. Data cleaning  
+4. Model training  
+5. Explainability with Grad-CAM  
+6. Web deployment with Streamlit  
 
 ---
 
-## 🏗️ Morphology Classes
+## Dataset
+
+**Dataset used:** Galaxy Zoo
+
+Galaxy Zoo provides galaxy images along with volunteer vote distributions for morphology-related questions.
+
+Instead of using raw labels directly, morphology labels were engineered from the Galaxy Zoo decision hierarchy and filtered using a confidence threshold to improve label quality.
+
+---
+
+## Morphology Classes
 
 | Class | Description |
-|---------|------------|
-| Round_Elliptical | Smooth and round galaxy |
-| Intermediate_Elliptical | Smooth but elongated galaxy |
-| EdgeOn_Disk | Disk galaxy viewed from the side |
-| Barred_Spiral | Spiral galaxy with central bar |
-| Unbarred_Spiral | Spiral galaxy without central bar |
-| Irregular_Merger | Disturbed or merging galaxy |
+|------|-------------|
+| `Round_Elliptical` | Smooth and round galaxy |
+| `Intermediate_Elliptical` | Smooth but elongated galaxy |
+| `EdgeOn_Disk` | Disk galaxy viewed from the side |
+| `Barred_Spiral` | Spiral galaxy with a central bar |
+| `Unbarred_Spiral` | Spiral galaxy without a central bar |
+| `Irregular_Merger` | Disturbed or merging galaxy |
 
 ---
 
-## 🔬 Label Engineering
+## Label Engineering
 
-Galaxy Zoo provides probabilities instead of labels.
+Galaxy Zoo provides probabilities rather than explicit labels.
 
-Morphology scores were generated using the Galaxy Zoo decision hierarchy.
+Morphology scores were computed from the hierarchical decision tree. The final class label was assigned based on the highest score.
 
 Example:
 
 ```python
 Round_Elliptical = Class1.1 * Class7.1
 
-Barred_Spiral = (
-    Class1.2 *
-    Class4.1 *
-    Class3.1
-)
+Barred_Spiral = Class1.2 * Class4.1 * Class3.1
 ```
 
-The morphology with the highest score becomes the final label.
+To improve label reliability, only high-confidence samples were retained.
 
 ---
 
-## 🧹 Dataset Cleaning
+## Dataset Cleaning
 
-### Confidence-Based Filtering
+### Confidence-based filtering
 
-Each galaxy receives a confidence score:
+Each galaxy receives a morphology confidence score:
 
 ```python
 Confidence = max(morphology_scores)
 ```
 
-Only galaxies with:
+Only samples with:
 
 ```python
 Confidence >= 0.4
 ```
 
-are retained.
+were kept for training.
 
-This removes ambiguous samples and improves label quality.
+This reduced ambiguity and improved class consistency.
 
 ---
 
-## 📊 Dataset Statistics
+## Dataset Statistics
 
-Initial Dataset: ~61,000 galaxies
+| Metric | Value |
+|--------|------:|
+| Original samples | 61,578 |
+| Clean samples | 26,281 |
+| Number of classes | 6 |
+| Framework | PyTorch |
+| Hardware | Tesla T4 GPU |
 
-Final Clean Dataset:
-
-- Total Samples: 26,281
-- Classes: 6
-
-Class Distribution:
-
+### Class distribution
 - Round Elliptical
 - Intermediate Elliptical
 - Edge-On Disk
@@ -115,127 +133,171 @@ Class Distribution:
 
 ---
 
-## Project Progress
+## Model Development
 
-| Day | Work Completed | Result |
-|-----|---------------|---------|
-| Day 1 | Data Cleaning & Morphology Label Creation | 26k high-confidence galaxy samples |
-| Day 2 | Baseline CNN Development | Validation Accuracy: 73.4% |
-| Day 3 | Transfer Learning with ResNet50 | Accuracy: 86.45%, Macro F1: 0.8225 |
-| Day 4 | Grad-CAM & Error Analysis | Interpretable predictions and failure analysis |
+### Baseline CNN
+A custom CNN was trained as a baseline to establish initial performance.
+
+### Transfer Learning
+A pretrained **ResNet50** model was fine-tuned on the cleaned galaxy dataset, significantly improving classification performance.
+
+### Evaluation
+The model was evaluated using:
+- Accuracy
+- Weighted F1 Score
+- Macro F1 Score
+- Confusion Matrix
 
 ---
 
-## Key Metrics
+## Model Comparison
+
+| Model | Description | Validation Accuracy | Weighted F1 | Macro F1 | Notes |
+|------|-------------|------:|------:|------:|------|
+| Custom CNN | Lightweight baseline model trained from scratch | 73.4% | 71.3% | 62.1% | Good baseline, struggled on minority classes |
+| ResNet50 | Transfer learning with pretrained CNN backbone | 86.45% | 84.9% | 82.25% | Best overall performance, improved class separation |
+
+---
+
+## Results
 
 | Metric | Value |
-|----------|---------|
-| Original Samples | 61,578 |
-| Clean Samples | 26,281 |
-| Number of Classes | 7 |
-| Model | Custom CNN |
-| Epochs | 20 |
-| Validation Accuracy | 73.4% |
-| Framework | PyTorch |
-| Hardware | Tesla T4 GPU |
+|--------|------:|
+| Baseline Validation Accuracy | 73.4% |
+| ResNet50 Validation Accuracy | 86.45% |
+| ResNet50 Macro F1 Score | 0.8225 |
+| Baseline Weighted F1 Score | 71.3% |
 
-The baseline CNN achieved 73.4% validation accuracy with a weighted F1 score of 71.3%. The lower macro F1 score (62.1%) indicates reduced performance on minority morphology classes, motivating the use of transfer learning with ResNet50 in the next phase of the project.
+The transfer learning model improved performance significantly, especially on well-defined morphology classes.
 
 ---
 
-## Skills Acquired
+## Confusion Matrix Insights
 
-| Day 1 | Day 2 |
-|---------|---------|
-| Dataset Cleaning | CNN Architecture |
-| Label Engineering | PyTorch Dataset & DataLoader |
-| Confidence Thresholding | GPU Training |
-| Data Splitting | Cross Entropy Loss |
-| Class Distribution Analysis | Model Evaluation |
-
----
-
-### Confusion Matrix Insights
-
-The ResNet50 model achieved strong class separation, with most predictions concentrated along the diagonal of the confusion matrix.
-
-Major confusion pairs included:
+The main confusion pairs were:
 
 - Barred Spiral ↔ Unbarred Spiral
 - Round Elliptical ↔ Intermediate Elliptical
 - Unbarred Spiral ↔ Irregular Merger
 
-These errors are scientifically reasonable because the paired classes share similar visual morphology. The model demonstrated excellent performance on Edge-On Disk and Round Elliptical galaxies, while Irregular Merger remained the most challenging class due to its highly variable structure.
+These errors are scientifically reasonable because these classes share similar visual features.
+
+The model performed especially well on:
+- Edge-On Disk
+- Round Elliptical
+
+The most difficult class remained:
+- Irregular / Merger
 
 ---
 
-## Day 4: Explainability & Error Analysis
+## Explainability with Grad-CAM
 
-| Task | Outcome |
-|--------|---------|
-| Implemented Grad-CAM | Visualized regions used by ResNet50 for predictions |
-| Generated heatmaps for all galaxy classes | Verified model focuses on galaxy structures |
-| Performed error analysis | Investigated common misclassification patterns |
-| Analyzed prediction confidence | Evaluated model certainty across classes |
+Grad-CAM was implemented to visualize which parts of an image influenced the model’s prediction.
 
-### Key Learnings
+### Key observations
+- Spiral galaxies activated around arms and central bulges
+- Elliptical galaxies activated across the full galaxy body
+- Irregular galaxies activated around asymmetric or distorted regions
+- Background noise contributed minimally to predictions
 
-- Grad-CAM helps interpret CNN predictions by highlighting important image regions.
-- The model primarily focused on galaxy cores and structural features.
-- Background stars and empty regions contributed minimally to predictions.
-- Most classification errors occurred between visually similar galaxy morphologies.
-- Explainability is essential for validating model reliability in scientific applications.
+### Grad-CAM preview
 
-### Observations
+![Unbarred Spiral](gradcam_unbarred_spiral.png)
 
-- Spiral galaxies showed strong activation around central bulges and surrounding arm structures.
-- Elliptical galaxies exhibited broader activation across the galaxy body.
-- Irregular and merger galaxies activated around asymmetric and distorted regions.
-- Misclassified samples often contained ambiguous morphology or weak structural features.
+![Round Elliptical](gradcam_round_elliptical.png)
 
-### Grad-CAM Examples
-
-| Example | Screenshot |
-|----------|-----------|
-| Unbarred Spiral | Insert Image |
-| Round Elliptical | Insert Image |
-| Irregular Merger | Insert Image |
-| Misclassified Galaxy | Insert Image |
+![Irregular Merger](gradcam_irregular_merger.png)
 
 ---
 
-## 🛠️ Tech Stack
+## Live Demo
 
-### Data Processing
-- Python
-- Pandas
-- NumPy
+Try the deployed app here:
 
-### Visualization
-- Matplotlib
-- Seaborn
+**[Launch Live Demo](https://galaxy-vision-ai.streamlit.app/)**
 
-### Deep Learning
+The Streamlit app allows users to:
+- upload a galaxy image
+- get a morphology prediction
+- view prediction confidence
+- inspect Grad-CAM heatmaps
+
+---
+
+## Tech Stack
+
+| Category | Tools |
+|---------|-------|
+| Language | Python |
+| Data Processing | Pandas, NumPy |
+| Visualization | Matplotlib, Seaborn |
+| Deep Learning | PyTorch, Torchvision |
+| Image Processing | OpenCV, Albumentations |
+| Explainability | Grad-CAM |
+| Deployment | Streamlit |
+| Development | Google Colab |
+| Version Control | GitHub |
+
+---
+
+## Project Structure
+
+```text
+galaxy-vision-ai/
+│
+├── app.py
+├── requirements.txt
+├── README.md
+├── .gitignore
+│
+├── models/
+│   └── resnet50.pth
+│
+├── data/
+│   └── processed/
+│
+└── notebooks/
+    ├── 01_EDA_Cleaning.ipynb
+    ├── 02_CNN_Baseline.ipynb
+    ├── 03_ResNet50_Training.ipynb
+    └── 04_GradCAM_Error_Analysis.ipynb
+
+
+```
+
+---
+
+## Future Enhancements
+
+- Hierarchical classification
+- Redshift estimation
+- Galaxy similarity search
+- Anomaly detection
+- Galaxy-to-Pokémon mapping
+
+---
+
+## What I Learned
+
+- How to engineer labels from a hierarchical dataset
+- How to clean noisy real-world scientific data
+- How to train CNNs and transfer learning models
+- How to interpret predictions with Grad-CAM
+- How to deploy an ML model using Streamlit
+
+---
+
+## Acknowledgements
+
+- Galaxy Zoo dataset
 - PyTorch
 - Torchvision
-
-### Explainability
-- Grad-CAM
-
-### Deployment
 - Streamlit
-
-### Development
-- Google Colab
+- Grad-CAM research
 
 ---
 
-## 📈 Future Enhancements
+## License
 
-- Hierarchical Classification
-- Redshift Estimation
-- Galaxy Similarity Search
-- Anomaly Detection
-- Galaxy-to-Pokémon Mapping
-
----
+Add your preferred license here.
